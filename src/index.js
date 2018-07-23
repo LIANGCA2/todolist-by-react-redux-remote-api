@@ -9,13 +9,11 @@ import axios from "axios/index";
 const store = createStore(reducer)
 const rootEl = document.getElementById('root')
 const apiUrl ='https://5b52a452d9b92700141c9943.mockapi.io/api/v1'
-axios.get(`${apiUrl}/todo`).then(response=>{
-   TodoApi.InitData(response);
+
     ReactDOM.render(
         <Provider store={store}>
             <App/>
         </Provider>,
         rootEl
     )
-});
 

@@ -3,61 +3,57 @@ import TodoApi from '../api/TodoApi'
 import {combineReducers} from "redux";
 
 
-
-const InitState = TodoApi.getInitData();
-export default  (state=InitState, action) => {
+export default (state = {
+    todoList: [], status: "all"
+}, action) => {
 
     switch (action.type) {
+        case types.InitState: {
+            return {
+                todoList: action.todos,
+                status: "all"
+            }
+        }
         case types.add: {
 
-           return {
-               todoList:[...state.todoList,action.todo],
-               status:state.status
+            return {
+                todoList: [...state.todoList, action.todo],
+                status: state.status
 
-           }
+            }
 
         }
-        case types.changeCheckStatus:{
+        case types.changeCheckStatus: {
 
 
             var todoList = [...state.todoList];
 
-            const todoLists = todoList.map((item)=>{
-                return item.id === action.id?{...item,complete:!item.complete}:item
+            const todoLists = todoList.map((item) => {
+                return item.id === action.id ? {
+                    ...item,
+                    status: item.status == "active" ? "completed" : "active"
+                } : item
             })
 
             const newState = {
                 todoList: todoLists.concat(), status: state.status
             }
+            console.log(newState)
             return newState;
 
 
-
-
-            //
-            // var todolist = [...state.todoList];
-            // var iscomplete = todolist.find((item)=>item.id ==action.id).complete;
-            // todolist.find((item)=>item.id ==action.id).complete = !iscomplete;
-            // const newState = {
-            //     todoList: todolist, status: state.status
-            // }
-            //
-            // return newState;
         }
-        case types.changeTab:{
-
-
-            var status = action.status
+        case types.changeTab: {
             const newState = {
-                todoList: state.todoList, status: status
+                todoList: action.todos, status: action.status
             }
 
             return newState;
         }
-        case types.changeContent:{
+        case types.changeContent: {
 
             var todoList = [...state.todoList];
-            todoList.find((item)=>item.id ==action.id).content = action.content;
+            todoList.find((item) => item.id == action.id).content = action.content;
             const newState = {
                 todoList: todoList, status: state.status
             }

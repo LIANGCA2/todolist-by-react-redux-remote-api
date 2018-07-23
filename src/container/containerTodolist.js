@@ -1,28 +1,33 @@
 import {connect} from 'react-redux'
 import TodoList from "../component/todoList";
-import {changeCheckStatus,changeContent} from "../actions/index";
+import {changeCheckStatus, changeContent} from "../actions/index";
 import TodoApi from "../api/TodoApi"
 
 
-const mapStateToProps = (state, ownProps) =>{
-    console.log("iiii")
-  return{
-      todoList:TodoApi.filterByStatus()
-  }
-    }
+const mapStateToProps = (state, ownProps) => {
 
-const mapDispatchToProps = (dispatch,ownProps)=> {
     return {
-        changeCheckStatus: (id) => {
+        todoList: state.todoList
+    }
+}
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+    let status = "all";
+    if (ownProps.match.params.status != undefined) {
+        status = ownProps.match.params.status;
+    }
+    return {
+        InitState: () => {
+            TodoApi.changeStatus(status, dispatch)
+        },
+        changeCheckStatus: (item) => {
 
 
-            TodoApi.changeCheckStatus(id,()=>{
-                dispatch(changeCheckStatus(id))
-            });
+            TodoApi.changeCheckStatus(item, dispatch)
 
         },
-        changeContent:(id, content) =>{
-            TodoApi.changeContent(id,content,dispatch);
+        changeContent: (id, content) => {
+            TodoApi.changeContent(id, content, dispatch);
             //dispatch(changeContent(id, content))
         }
     }
@@ -30,4 +35,4 @@ const mapDispatchToProps = (dispatch,ownProps)=> {
 }
 
 
-export default connect(mapStateToProps,mapDispatchToProps)(TodoList)
+export default connect(mapStateToProps, mapDispatchToProps)(TodoList)

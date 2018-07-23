@@ -1,4 +1,5 @@
 import React,{Component} from "react"
+import {BrowserRouter, Link} from "react-router-dom";
 
 
 class FilterList extends Component{
@@ -10,15 +11,19 @@ class FilterList extends Component{
     }
     render(){
         return (<div>
+
+
+
+
             <ul id="filters">
                 <li>
-                    <a href="#" data-filter="all" className={this.props.status=="all"?"selected":""}  onClick = {(event,status)=>this.changeTab(event,"all")}>ALL</a>
+                    <Link to="/all"  data-filter="all" className={this.props.status=="all"?"selected":""}  onClick = {(event,status)=>this.changeTab(event,"all")}>ALL</Link>
                 </li>
                 <li>
-                    <a href="#" data-filter="active"  className={this.props.status=="active"?"selected":""} onClick = {(event,status)=>this.changeTab(event,"active")}>Active</a>
+                    <Link to="/active" data-filter="active"  className={this.props.status=="active"?"selected":""} onClick = {(event,status)=>this.changeTab(event,"active")}>Active</Link>
                 </li>
                 <li>
-                    <a href="#" data-filter="complete"  className={this.props.status=="complete"?"selected":""} onClick = {(event,status)=>this.changeTab(event,"complete")}>Complete</a>
+                    <Link to ="/completed"  data-filter="complete"  className={this.props.status=="completed"?"selected":""} onClick = {(event,status)=>this.changeTab(event,"completed")}>Complete</Link>
                 </li>
             </ul>
 

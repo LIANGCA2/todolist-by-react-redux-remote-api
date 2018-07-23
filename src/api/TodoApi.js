@@ -1,47 +1,32 @@
 import TODO from "../model/TODO"
 import axios from "axios/index"
-import {addItem,changeTab,changeContent} from "../actions/index";
+import {addItem, changeTab, changeContent, InitState} from "../actions/index";
+import {changeCheckStatus} from "../actions";
 
 const TodoApi = {
-    todos: [],
-    status: "all",
-    apiUrl: 'https://5b52a452d9b92700141c9943.mockapi.io/api/v1',
+
+    apiUrl: 'http://localhost:8080/api/todos',
 
 
-    InitData(response){
-        response.data.forEach(item=>{
-            this.todos.push(new TODO(item.id,item.content,item.complete))
+
+    changeStatus(status, dispatch) {
+
+        console.log(status);
+        axios.get(`${this.apiUrl}/search/statusOfTodos?status=${status=="all"?"completed,active":status}`).then(response=>{
+            let todos = [];
+            response.data._embedded.todos.forEach(item=>{
+                todos.push(new TODO(item.id,item.content,item.status))
+            });
+            console.log(todos)
+
+            dispatch(changeTab(todos,status))
         })
 
-
     },
-    getInitData(){
-        return {
-            todoList:this.todos,
-            status:this.status
-        }
-    },
-    filterByStatus(){
-        console.log(this.status)
-        return this.todos.filter((item)=>this.status==TODO.ALL?true:this.status==TODO.ACTIVE?!item.complete:item.complete)
+    changeContent(id, content, dispatch) {
 
-    },
-    changeStatus(status,dispatch) {
-        console.log("ddddd");
-        console.log(status);
-        this.status = status;
-        dispatch(changeTab(status))
-       // axios.get(`${this.apiUrl}/todo?search=`+status==='complete'?true:status==='active'?false).then()
-    },
-    changeContent(id, content,dispatch) {
-
-
-        let todo = this.todos.find(item => item.id === id);
-        if (todo !== undefined) {
-            todo.changeContent(content);
-        }
-        axios.put(`${this.apiUrl}/todo/`+id,{
-            content:content
+        axios.patch(`${this.apiUrl}/${id}`, {
+            content: content
         }).then(
             dispatch(changeContent(id, content))
         )
@@ -54,64 +39,37 @@ const TodoApi = {
     getStatus() {
         return this.staus;
     },
-    changeCheckStatus(id,successCallBack) {
-
-
-        let todo = this.todos.find(item => item.id === id);
-        if (todo !== undefined) {
-
-            todo.toggleActive();
-        }
-        axios.put(`${this.apiUrl}/todo/`+id,{
-            complete: !todo.complete
-        }).then(response=>{
-            successCallBack()
+    changeCheckStatus(item, dispatch) {
+        axios.patch(`${this.apiUrl}/${item.id}`, {
+            status: item.status==="active"?"completed":"active"
+        }).then(response => {
+          dispatch(changeCheckStatus(item.id))
         })
     },
-    addItem(content,dispatch) {
+    addItem(content, dispatch) {
 
         axios
-                .post(`${this.apiUrl}/todo`, {
-                    //id: todo.id,
-                    content: content,
-                    complete: false
-                })
-                .then((response)=> {
+            .post(`${this.apiUrl}`, {
+                //id: todo.id,
+                content: content,
+                status: "active"
+            })
+            .then((response) => {
+console.log(response);
 
+                let todo = new TODO(
+                    response.data.id,
+                    response.data.content,
+                    response.data.status
+                );
+                dispatch(addItem(todo))
 
-
-                       let todo =  new TODO(
-                            response.data.id,
-                            response.data.content,
-                            response.data.complete
-                        );
-                    this.todos.push(todo)
-                    dispatch(addItem(todo))
-
-                }).catch(function(error) {
+            }).catch(function (error) {
 
         });
 
     },
-    generateUUID() {
-        /*jshint bitwise:false */
-        var i,
-            random;
-        var uuid = '';
 
-        for (i = 0; i < 32; i++) {
-            random = Math.random() * 16 | 0;
-            if (i === 8 || i === 12 || i === 16 || i === 20) {
-                uuid += '-';
-            }
-            uuid += (i === 12
-                ? 4
-                : (i === 16
-                    ? (random & 3 | 8)
-                    : random)).toString(16);
-        }
-        return uuid;
-    }
 
 
 }
