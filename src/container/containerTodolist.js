@@ -7,7 +7,8 @@ import TodoApi from "../api/TodoApi"
 const mapStateToProps = (state, ownProps) => {
 
     return {
-        todoList: state.todoList
+        todoList: state.todoList,
+
     }
 }
 

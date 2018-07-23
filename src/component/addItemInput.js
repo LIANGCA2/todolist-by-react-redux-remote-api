@@ -1,32 +1,43 @@
-import React,{Component} from 'react'
+import React, {Component} from 'react'
 import TodoApi from "../api/TodoApi"
+import {Button, Input} from "antd";
 
 
-class AddItemInput extends Component{
+class AddItemInput extends Component {
 
 
     constructor(props) {
         super(props);
-        this.inputText = React.createRef();
+        this.state = {
+            inputValue: ""
+        }
+
     }
 
 
+    addItem = (value, event) => {
 
-    addItem = (event)=>{
-
-        var content = this.inputText.current.value;
-        this.props.addItem(content);
-        this.inputText.current.value = "";
+        this.props.addItem(value);
+        this.setState({
+            inputValue: ""
+        })
     }
 
+    changeInputValue = (e) => {
+        let inputValue = e.target.value;
+        this.setState({
+            inputValue
+        })
 
-    render(){
+    }
+
+    render() {
         return (<div>
-            <input className="input-text" type="text" name="ListItem" ref={this.inputText}
-
-            />
-            <div id="button" onClick= {(event)=>this.addItem(event)}>Add</div>
+            <Input.Search value={this.state.inputValue} onChange={(e) => this.changeInputValue(e)}
+                          onSearch={(value, event) => this.addItem(value, event)} className="input-text" type="text"
+                          name="ListItem" enterButton="Add"></Input.Search>
         </div>)
     }
 }
+
 export default AddItemInput;

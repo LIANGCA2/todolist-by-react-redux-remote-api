@@ -8,7 +8,7 @@ const mapStateToProps = (state, ownProps) => {
 
     return {
 
-        status: TodoApi.getStatus()
+        status: state.status
     }
 }
 

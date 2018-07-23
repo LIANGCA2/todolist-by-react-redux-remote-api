@@ -25,16 +25,15 @@ export default (state = {
         }
         case types.changeCheckStatus: {
 
-
             var todoList = [...state.todoList];
 
-            const todoLists = todoList.map((item) => {
+            let todoLists = todoList.map((item) => {
                 return item.id === action.id ? {
                     ...item,
                     status: item.status == "active" ? "completed" : "active"
                 } : item
             })
-
+            todoLists = todoLists.filter((item)=>(item.id!==action.id||state.status=="all"))
             const newState = {
                 todoList: todoLists.concat(), status: state.status
             }
@@ -44,6 +43,8 @@ export default (state = {
 
         }
         case types.changeTab: {
+            console.log(action.todos)
+            console.log(action.status)
             const newState = {
                 todoList: action.todos, status: action.status
             }
